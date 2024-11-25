@@ -2,7 +2,9 @@ package com.neoteric.collections.collectionsnov.salarydetails;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class SalaryTest {
 
@@ -82,6 +84,9 @@ public class SalaryTest {
             departments.add(financeDeaprtment);
 
 
+          //  List<String> empidlist=departments.stream().map(Department::getEmployeeList).collect(Collectors.toList());
+
+           // Map<String,List<Employee>> departmentmap=departments.stream().collect(groupingby(Department::))
             Optional<Employee> companyMaxSalaryEmployee = departments.stream()
                     .flatMap(department -> department.getEmployeeList().stream())
                     .max((o1, o2) -> o1.compareTo(o2));
@@ -117,6 +122,19 @@ public class SalaryTest {
                     System.out.println("Department: " + department.getName());
                     System.out.println("  minimum Salary Employee: " + employee);
                 });
+            });
+
+            Map<String, Double> averageSalaries = departments.stream()
+                    .collect(Collectors.toMap(
+                            Department::getName, // Department name as the key
+                            department -> department.getEmployeeList().stream()
+                                    .collect(Collectors.averagingDouble(Employee::getSalary)) // Average salary calculation
+                    ));
+
+            // Print the results
+            averageSalaries.forEach((departmentName, avgSalary) -> {
+                System.out.println("Department: " + departmentName);
+                System.out.println("  Average Salary: " + avgSalary);
             });
         }
     }
